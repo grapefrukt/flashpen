@@ -1,0 +1,8 @@
+#common filters
+.DS_Store
+thumbs.db
+.svn
+
+#build trash
+bin/*
+obj
