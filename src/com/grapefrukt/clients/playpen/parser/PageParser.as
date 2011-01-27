@@ -28,6 +28,8 @@ package com.grapefrukt.clients.playpen.parser {
 			data = data.replace(/\r\n/g, '\n');
 			data = data.replace(/\r/g, '\n');
 			
+			trace("parsing", page.name);
+			
 			parseImage(	page, data.substring(IMAGE_START_INDEX, IMAGE_END_INDEX));
 			parseMap(	page, data.substring(MAP_START_INDEX, MAP_END_INDEX));
 			parseLinks(	page, collection, data.substring(LINK_START_INDEX));

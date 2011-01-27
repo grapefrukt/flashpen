@@ -35,8 +35,6 @@ package com.grapefrukt.clients.playpen.loader {
 		}
 		
 		public function load():void {
-			trace("loading", _page.name, _overrideName);
-			
 			_loader = new URLLoader;
 			var u:URLRequest = new URLRequest(BASE_URL + (_overrideName || _page.name) + ACTION_URL);
 			

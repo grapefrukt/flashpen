@@ -1,11 +1,9 @@
 package  {
+	import com.grapefrukt.clients.playpen.display.PageTreeView;
 	import com.grapefrukt.clients.playpen.events.PageEvent;
 	import com.grapefrukt.clients.playpen.models.LinkModel;
 	import com.grapefrukt.clients.playpen.models.PageCollection;
 	import com.grapefrukt.clients.playpen.models.PageModel;
-	import com.grapefrukt.clients.playpen.parser.PageParser;
-	import flash.display.Bitmap;
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
@@ -23,12 +21,12 @@ package  {
 	
 	public class Main extends Sprite {
 		
-		private var _pages			:PageCollection;
-		private var _current_page	:PageModel;
-		private var _last_page		:PageModel;
-		private var _bmp			:Bitmap;
-		private var _tf				:TextField;
-
+		private var _pages	:PageCollection;
+		private var _tree	:PageTreeView;
+		
+		public static const STAGE_W:int = 800;
+		public static const STAGE_H:int = 600;
+		
 		public function Main():void {
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
@@ -38,68 +36,21 @@ package  {
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
 			
-			_pages = new PageCollection;
+			_pages = new PageCollection('Main_Page');
+			_tree = new PageTreeView(_pages);
+			_tree.x = STAGE_W / 2;
+			_tree.y = STAGE_H / 2;
+			addChild(_tree);
 			
-			_bmp = new Bitmap();
-			_bmp.scaleX = _bmp.scaleY = 5;
-			addChild(_bmp);
-			
-			setPage(_pages.getPage('Main_Page'));
-			//setPage(_pages.getPage('Commander Video'));
-			
-			_tf = new TextField();
-			_tf.autoSize = TextFieldAutoSize.LEFT;
-			_tf.x = 10;
-			_tf.y = _bmp.height + 10;
-			addChild(_tf);
-			
-			addEventListener(MouseEvent.MOUSE_MOVE, handleMouse);
-			addEventListener(MouseEvent.CLICK, handleMouse);
+			_pages.current.show();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
 			
 		}
 		
-		private function handleKeyboard(e:KeyboardEvent):void {
-			if (e.keyCode == Keyboard.BACKSPACE) {
-				if(_last_page) setPage(_last_page);
-			}
-			
+		private function handleKeyboard(e:KeyboardEvent):void {	
 			if (e.keyCode == Keyboard.SPACE) {
-				setPage(_pages.getPage('Main_Page'));
-			}
-		}
-		
-		private function handleMouse(e:MouseEvent):void {
-			var xpos:int = mouseX / _bmp.scaleX;
-			var ypos:int = mouseY / _bmp.scaleY;
-			var link:LinkModel = _current_page.getLink(xpos, ypos);
-			_tf.text = (link ? link.label.replace(/\\n/g, '\n') : '');
-			if (link && e.type == MouseEvent.CLICK) {
-				setPage(link.target);
-			}
-		}
-		
-		private function setPage(page:PageModel):void{
-			_last_page = _current_page;
-			_current_page = page;
-			
-			if (_last_page) _last_page.removeEventListener(PageEvent.STATE_CHANGE, handleCurrentPageStateChange)
-			
-			if (_current_page.state == PageModel.STATE_LOADED) {
-				handleCurrentPageStateChange(null);
-			} else {
-				_current_page.addEventListener(PageEvent.STATE_CHANGE, handleCurrentPageStateChange)
-			}
-			
-			_current_page.load();
-			
-			_bmp.bitmapData = page.image;
-		}
-		
-		private function handleCurrentPageStateChange(e:PageEvent):void {
-			for each (var link:LinkModel in _current_page.links) {
-				if (link && link.target) link.target.load();
+				_pages.home.show();
 			}
 		}
 

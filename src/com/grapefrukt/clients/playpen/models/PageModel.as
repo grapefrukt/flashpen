@@ -3,15 +3,16 @@ package com.grapefrukt.clients.playpen.models {
 	import com.grapefrukt.clients.playpen.events.PageLoaderEvent;
 	import com.grapefrukt.clients.playpen.loader.PageLoader;
 	import com.grapefrukt.clients.playpen.parser.PageParser;
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.EventDispatcher;
+	
 	/**
 	 * ...
 	 * @author Martin Jonasson (m@grapefrukt.com)
 	 */
 	
 	[Event(name = "pageevent_complete", type = "com.grapefrukt.clients.playpen.events.PageEvent")]
+	[Event(name = "pageevent_show", type = "com.grapefrukt.clients.playpen.events.PageEvent")]
 	
 	public class PageModel extends EventDispatcher {
 		
@@ -47,6 +48,10 @@ package com.grapefrukt.clients.playpen.models {
 				
 				dispatchEvent(new PageEvent(PageEvent.REQUEST_LOAD, this, _loader));
 			}
+		}
+		
+		public function show():void {
+			dispatchEvent(new PageEvent(PageEvent.SHOW, this));
 		}
 		
 		private function handleLoaded(e:PageLoaderEvent):void {

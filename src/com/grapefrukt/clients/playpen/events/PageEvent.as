@@ -9,6 +9,7 @@ package com.grapefrukt.clients.playpen.events {
 	 */
 	public class PageEvent extends Event {
 		
+		public static const SHOW			:String = "pageevent_show";
 		public static const STATE_CHANGE	:String = "pageevent_state_change";
 		public static const REQUEST_LOAD	:String = "pageevent_request_load";
 		
