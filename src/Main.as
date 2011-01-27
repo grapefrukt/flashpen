@@ -41,7 +41,7 @@ package  {
 			_pages = new PageCollection;
 			
 			_bmp = new Bitmap();
-			_bmp.scaleX = _bmp.scaleY = 10;
+			_bmp.scaleX = _bmp.scaleY = 5;
 			addChild(_bmp);
 			
 			setPage(_pages.getPage('Main_Page'));
@@ -76,7 +76,7 @@ package  {
 			var link:LinkModel = _current_page.getLink(xpos, ypos);
 			_tf.text = (link ? link.label.replace(/\\n/g, '\n') : '');
 			if (link && e.type == MouseEvent.CLICK) {
-				setPage(_pages.getPage(link.target));
+				setPage(link.target);
 			}
 		}
 		
@@ -84,22 +84,22 @@ package  {
 			_last_page = _current_page;
 			_current_page = page;
 			
-			if (_last_page) _last_page.removeEventListener(PageEvent.COMPLETE, handleCurrentPageComplete)
+			if (_last_page) _last_page.removeEventListener(PageEvent.STATE_CHANGE, handleCurrentPageStateChange)
 			
-			if (_current_page.isLoaded) {
-				trace("page was loaded, skipping to preload")
-				handleCurrentPageComplete(null);
+			if (_current_page.state == PageModel.STATE_LOADED) {
+				handleCurrentPageStateChange(null);
 			} else {
-				trace("page NOT loaded, waiting")
-				_current_page.addEventListener(PageEvent.COMPLETE, handleCurrentPageComplete)
+				_current_page.addEventListener(PageEvent.STATE_CHANGE, handleCurrentPageStateChange)
 			}
+			
+			_current_page.load();
 			
 			_bmp.bitmapData = page.image;
 		}
 		
-		private function handleCurrentPageComplete(e:PageEvent):void {
+		private function handleCurrentPageStateChange(e:PageEvent):void {
 			for each (var link:LinkModel in _current_page.links) {
-				if (link && link.target) _pages.getPage(link.target);
+				if (link && link.target) link.target.load();
 			}
 		}
 

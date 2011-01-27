@@ -17,16 +17,21 @@ package com.grapefrukt.clients.playpen.models {
 		}
 		
 		public function getPage(name:String):PageModel {
-			var p:PageModel = _pages[name];
-			if (!p) {
-				p = new PageModel(name);
-				_pages[name] = p;
-				PageLoader.load(p);
-			} else {
-				trace("cache hit!")
+			if (!_pages[name]) {
+				_pages[name] = new PageModel(this, name);
+				_pages[name].addEventListener(PageEvent.STATE_CHANGE, handlePageStateChange);
+				_pages[name].addEventListener(PageEvent.REQUEST_LOAD, handlePageRequestLoad);
 			}
 			
-			return p;
+			return _pages[name];
+		}
+		
+		private function handlePageRequestLoad(e:PageEvent):void {
+			e.loader.load();
+		}
+		
+		private function handlePageStateChange(e:PageEvent):void {
+			
 		}
 		
 	}

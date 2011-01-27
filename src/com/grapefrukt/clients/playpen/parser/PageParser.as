@@ -1,5 +1,6 @@
 package com.grapefrukt.clients.playpen.parser {
 	import com.grapefrukt.clients.playpen.models.LinkModel;
+	import com.grapefrukt.clients.playpen.models.PageCollection;
 	import com.grapefrukt.clients.playpen.models.PageModel;
 	import flash.display.BitmapData;
 	/**
@@ -21,15 +22,15 @@ package com.grapefrukt.clients.playpen.parser {
 		
 		static private const COLORS:Vector.<uint> = Vector.<uint>([0x000000, 0x788084, 0xffffff, 0xac1000, 0xfc589c, 0x503000, 0xac8000, 0xe46018, 0xfcd884, 0x004058, 0x006800, 0x00a800, 0x1f1f1f, 0x0088fc, 0x38c0fc, 0xf4d0b4]);
 		
-		public static function parse(data:String, page:PageModel):void {
+		public static function parse(collection:PageCollection, page:PageModel, data:String):void {
 			data = data.replace(/(^(\n|\r))|((\n|\r)$)/s, '');
 			data = data.replace(/\n\r/g, '\n');
 			data = data.replace(/\r\n/g, '\n');
 			data = data.replace(/\r/g, '\n');
 			
-			parseImage(	page, data.substring(	IMAGE_START_INDEX, 	IMAGE_END_INDEX));
-			parseMap(	page, data.substring(	MAP_START_INDEX, 	MAP_END_INDEX));
-			parseLinks(	page, data.substring(	LINK_START_INDEX));
+			parseImage(	page, data.substring(IMAGE_START_INDEX, IMAGE_END_INDEX));
+			parseMap(	page, data.substring(MAP_START_INDEX, MAP_END_INDEX));
+			parseLinks(	page, collection, data.substring(LINK_START_INDEX));
 		}
 
 		static private function parseImage(page:PageModel, data:String):void {
@@ -55,10 +56,10 @@ package com.grapefrukt.clients.playpen.parser {
 			}
 		}
 		
-		static private function parseLinks(page:PageModel, data:String):void {
+		static private function parseLinks(page:PageModel, collection:PageCollection, data:String):void {
 			var result:Array = data.split('\n');
 			for (var i:int = 0; i < LINK_COUNT; i++) {
-				page.links[i] = new LinkModel(result[i * 2 + 1], result[i * 2 + 0]);
+				page.links[i] = new LinkModel(result[i * 2 + 1], collection.getPage(result[ i * 2 + 0]));
 			}
 		}
 		
